@@ -41,3 +41,9 @@ Access tokens are short-lived.
 Refresh tokens are used to obtain new access tokens.
 
 All endpoints require authentication by default.
+
+### UI Framework Choice
+
+PrimeVue 4 was selected as the sole UI library to ensure visual consistency and reduce custom CSS.
+
+The Aura preset theme was chosen for its clean and professional aesthetic, which fits a productivity application context.
