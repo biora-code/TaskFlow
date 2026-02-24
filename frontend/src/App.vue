@@ -3,9 +3,7 @@ import Button from 'primevue/button'
 </script>
 
 <template>
-  <div style="padding: 2rem">
-    <Button label="PrimeVue works" />
-  </div>
+  <router-view />
 </template>
 
 <style scoped>
