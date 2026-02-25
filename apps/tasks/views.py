@@ -14,7 +14,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     ordering_fields = ['due_date', 'created_at']
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        return Task.objects.filter(
+        user=self.request.user,
+        parent__isnull=True
+    )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
