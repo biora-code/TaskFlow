@@ -20,3 +20,11 @@ class TestTaskSecurity(APITestCase):
         self.client.force_authenticate(user=self.user2)
         response = self.client.get('/api/tasks/')
         self.assertEqual(len(response.data['results']), 0)
+
+    def test_generate_subtasks_requires_auth(self):
+        task = Task.objects.create(
+        title="Test",
+        user=self.user1)
+        response = self.client.post(
+        f"/api/tasks/{task.id}/generate-subtasks/")
+        self.assertEqual(response.status_code, 401)
