@@ -100,11 +100,146 @@ Reason:
 - Required for Level 3 filtering and URL synchronization
 - Ensures consistent response structure
 
-A default ordering (-created_at) was added to the Task model.
+### 8. Task Domain Model
 
-Reason:
+The Task model supports hierarchical relationships using a self-referencing foreign key.
 
-- Prevents unstable pagination results
-- Ensures deterministic API responses
-- Eliminates pagination warnings
+Design:
 
+- A task may optionally reference a parent task
+- Root tasks (parent = null) represent top-level items
+- Subtasks are linked via the parent relationship
+
+
+### 9. Custom AI Integration Endpoint
+
+A custom Django REST Framework action was implemented:
+
+POST /api/tasks/{id}/generate-subtasks/
+
+
+- Uses @action(detail=True) to remain REST-compliant
+- Validates task ownership explicitly using get_object_or_404
+- Makes a secure server-to-server request to OpenRouter
+- Returns AI-generated suggestions without automatically persisting them
+- AI-generated subtasks are returned as suggestions instead of being persisted immediately.
+
+### 10. External API Security
+
+AI integration follows secure design principles:
+
+- OpenRouter API key is stored in environment variables
+- No API keys are exposed to the frontend
+- All AI calls are executed server-side
+
+
+### 11. API Usage Examples
+
+Obtain JWT Token
+POST /api/token/
+
+Request body:
+
+{
+  "username": "user",
+  "password": "password"
+}
+
+Response:
+
+{
+  "access": "<jwt_access_token>",
+  "refresh": "<jwt_refresh_token>"
+}
+
+Create Task
+POST /api/tasks/
+Authorization: Bearer <access_token>
+{
+  "title": "Build Portfolio Website",
+  "description": "Create a personal website"
+}
+
+Generate AI Subtasks
+POST /api/tasks/{id}/generate-subtasks/
+Authorization: Bearer <access_token>
+
+Response:
+
+{
+  "suggestions": ".............."
+}
+
+### 12. Separation of Concerns
+
+The application follows layered responsibilities:
+
+- Authentication: JWT (SimpleJWT)
+- Business logic: ViewSets
+- Serialization: Dedicated serializers
+- Data validation: Model layer
+- External services: Isolated in AI action
+- State management (frontend): Pinia
+
+
+### 13. Architectural Trade-Offs  !!!!!!
+
+Given time constraints, priority was given to:
+
+- Secure backend implementation
+- Clean RESTful API design
+- Automated tests for security and isolation
+- Proper AI service integration
+
+
+Frontend functionality was intentionally limited to focus on backend robustness and architectural clarity.
+The API is fully functional and can be consumed by any SPA or mobile client.
+
+### 14. If I Had More Time
+
+### Planned improvements:
+
+- Structured JSON schema validation for AI responses
+- Background job processing for AI calls (Celery)
+- PostgreSQL for production readiness
+- Dockerized environment
+- CI/CD pipeline (GitHub Actions)
+- Role-based permissions
+- Improved frontend task management UI
+- Optimistic UI updates and improved state normalization
+
+### 15. How to Run the Project
+
+
+Backend
+python -m venv venv
+source venv/bin/activate   (or venv\Scripts\activate on Windows)
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+Create a .env file in the backend root:
+OPENROUTER_API_KEY=your_openrouter_key_here
+
+Frontend
+npm install
+npm run dev
+
+Frontend runs on:
+
+http://localhost:5173
+
+Backend runs on:
+
+http://127.0.0.1:8000
+
+### 16. Final Notes
+
+This project prioritizes:
+
+- Security by default
+- Clear architectural structure
+- Deterministic behavior
+- Proper separation of concerns
+- Defensive programming when integrating external services
+- The backend is production-structured and ready to scale beyond the current scope.
