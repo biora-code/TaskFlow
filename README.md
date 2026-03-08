@@ -184,14 +184,6 @@ The application follows layered responsibilities:
 
 ### 13. Architectural Trade-Offs  !!!!!!
 
-Given time constraints, priority was given to:
-
-- Secure backend implementation
-- Clean RESTful API design
-- Automated tests for security and isolation
-- Proper AI service integration
-
-
 Frontend functionality was intentionally limited to focus on backend robustness and architectural clarity.
 The API is fully functional and can be consumed by any SPA or mobile client.
 
